@@ -31,12 +31,27 @@
     ```json
     {
       "extractor_patterns": {
-        "question": "\n(?=\d+\.\s)",
-        "options": "^[a-d]\)",
-        "answer": "(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
+        "question": "\\n(?=\\d+\\.\\s)",
+        "options": "^[a-d]\\)",
+        "answer": "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])"
       }
     }
     ```
+
+Aquí tienes algunos ejemplos de patrones que puedes usar en tu archivo `config.json`, dependiendo del formato de tu PDF:
+
+| Caso de Uso               | Patrón                                      | Descripción                                                                   |
+| ------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Preguntas**             |                                             |                                                                               |
+| Preguntas numeradas (1., 2.) | `"\\n(?=\\d+\\.\\s)"`                   | Divide el texto en preguntas basándose en un número seguido de un punto y un espacio. |
+| Preguntas con un prefijo  | `"\\n(?=Pregunta:\\s\\d+)"`             | Divide por "Pregunta:" seguido de un número.                                  |
+| **Opciones**              |                                             |                                                                               |
+| Opciones con letra (a), b)) | `"^[a-d]\\)"`                             | Coincide con líneas que comienzan con una letra de la a a la d seguida de un paréntesis. |
+| Opciones con letra (a., b.) | `"^[a-d]\\."`                             | Coincide con líneas que comienzan con una letra de la a a la d seguida de un punto.   |
+| **Respuestas**            |                                             |                                                                               |
+| "1. Respuesta Correcta: A" | `"(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])"` | Captura el número de la pregunta y la letra de la respuesta correcta.         |
+| "Respuesta 1: A"          | `"Respuesta\\s+(\\d+):\\s+([A-Da-d])"`      | Captura el número de la pregunta y la letra correcta en un formato diferente. |
+
 
 ### 🚀 Uso
 Ejecuta el script desde tu terminal, proporcionando los archivos PDF como argumentos.

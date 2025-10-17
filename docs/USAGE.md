@@ -38,6 +38,21 @@
     }
     ```
 
+Here are some examples of patterns you can use in your `config.json` file, depending on the format of your PDF:
+
+| Use Case                  | Pattern                                     | Description                                                                 |
+| ------------------------- | ------------------------------------------- | --------------------------------------------------------------------------- |
+| **Questions**             |                                             |                                                                             |
+| Numbered questions (1., 2.) | `"\\n(?=\\d+\\.\\s)"`                   | Splits the text into questions based on a number followed by a dot and a space. |
+| Questions with a prefix   | `"\\n(?=Question:\\s\\d+)"`              | Splits by "Question:" followed by a number.                                 |
+| **Options**               |                                             |                                                                             |
+| Lettered options (a), b)) | `"^[a-d]\\)"`                             | Matches lines starting with a letter from a to d followed by a parenthesis. |
+| Lettered options (a., b.) | `"^[a-d]\\."`                             | Matches lines starting with a letter from a to d followed by a dot.         |
+| **Answers**               |                                             |                                                                             |
+| "1. Correct Answer: A"    | `"(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])"` | Captures the question number and the correct letter.                        |
+| "Answer 1: A"             | `"Answer\\s+(\\d+):\\s+([A-Da-d])"`         | Captures the question number and the correct letter in a different format.  |
+
+
 ### 🚀 Usage
 Run the script from your terminal, providing the PDF files as arguments.
 
