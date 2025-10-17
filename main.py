@@ -1,6 +1,6 @@
 import argparse
 from config_loader import load_config
-from pdf_parser import extract_pdf_text, parse_questions, parse_answers
+from pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
 from google_form_creator import authenticate, create_form, batch_update_form
 
 def main():
@@ -9,6 +9,7 @@ def main():
     parser.add_argument("questions_pdf", help="Path to the PDF file with the questions.")
     parser.add_argument("answers_pdf", nargs='?', default=None, help="(Optional) Path to the PDF with the answers for quiz mode.")
     parser.add_argument("--type", choices=['quiz', 'survey'], default='quiz', help="Defines if the form is a 'quiz' (with answers) or a 'survey' (without answers).")
+    parser.add_argument("--title", default=None, help="Title of the Google Form.")
     args = parser.parse_args()
 
     if args.type == 'quiz' and not args.answers_pdf:
@@ -19,7 +20,14 @@ def main():
 
     print("Reading and processing PDF files...")
     questions_text = extract_pdf_text(args.questions_pdf)
-    parsed_questions = parse_questions(questions_text, patterns)
+
+    form_title = args.title
+    if not form_title:
+        extracted_title = extract_title(questions_text, patterns)
+        if extracted_title:
+            form_title = extracted_title
+
+    parsed_questions = parse_questions(questions_text, patterns=patterns)
 
     correct_answers = {}
     if args.type == 'quiz':
@@ -27,7 +35,7 @@ def main():
         correct_answers = parse_answers(answers_text, patterns)
 
     print(f"Creating a form of type: '{args.type}'...")
-    form_result = create_form(forms_service, "Automatically Generated Questionnaire")
+    form_result = create_form(forms_service, title=form_title)
     form_id = form_result['formId']
 
     requests = []

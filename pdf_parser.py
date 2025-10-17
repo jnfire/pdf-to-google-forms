@@ -10,6 +10,14 @@ def extract_pdf_text(pdf_path):
         print(f"Error reading PDF file {pdf_path}: {e}")
         return None
 
+def extract_title(text, patterns):
+    """Extracts the title from the text using the patterns from the config."""
+    match = re.search(patterns['title'], text)
+    if match:
+        return match.group(1).strip()
+    return "Cuestionario sin título"
+
+
 def parse_questions(text, patterns):
     """Parses the questions text using the patterns from the config."""
     questions = []
