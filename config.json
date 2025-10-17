@@ -1,8 +1,7 @@
 {
   "extractor_patterns": {
-    "question": "\\n(?=\\d+\\.\\s)",
-    "options": "^[A-Da-d]\\)",
-    "response": "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])\\)"
+    "question": "\n(?=\d+\.\s)",
+    "options": "^[A-Da-d]\)",
+    "answer": "(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
   }
 }
-

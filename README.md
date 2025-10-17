@@ -48,9 +48,9 @@ This Python script automates the creation of quizzes and surveys in Google Forms
     ```json
     {
       "extractor_patterns": {
-        "question": "\n(?=\d+\.\s)",
-        "options": "^[a-d]\)",
-        "answer": "(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
+        "question": "\\n(?=\\d+\\.\\s)",
+        "options": "^[a-d]\\)",
+        "answer": "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])"
       }
     }
     ```
@@ -115,9 +115,9 @@ Upon completion, the script will provide you with the links to edit and view the
     ```json
     {
       "extractor_patterns": {
-        "question": "\n(?=\d+\.\s)",
-        "options": "^[a-d]\)",
-        "response": "(\d+)\.\s+Respuesta Correcta:\s+([A-Da-d])"
+        "question": "\\n(?=\\d+\\.\\s)",
+        "options": "^[a-d]\\)",
+        "answer": "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])"
       }
     }
     ```
