@@ -1,0 +1,10 @@
+{
+  "form_title": "My Awesome Google Form",
+  "drive_folder_name": "My Google Forms",
+  "extractor_patterns": {
+    "title": "###\s*(.*?)\s*###",
+    "questions": "\\n(\d+)\.\s(.*?)(?=\\n\d+\.\s|$)",
+    "options": "[A-Z]\n\s*\)",
+    "answers": "(\d+)\s*-\s*([A-Z])"
+  }
+}

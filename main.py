@@ -1,7 +1,7 @@
 import argparse
 from config_loader import load_config
 from pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
-from google_form_creator import authenticate, create_form, batch_update_form
+from google_form_creator import authenticate, create_form, batch_update_form, get_or_create_folder, move_form_to_folder
 
 def main():
     """Main function to run the script."""
@@ -15,13 +15,14 @@ def main():
     if args.type == 'quiz' and not args.answers_pdf:
         parser.error("The 'quiz' type requires an answer file.")
 
-    patterns = load_config()
-    forms_service = authenticate()
+    config = load_config()
+    patterns = config.get('extractor_patterns', {})
+    forms_service, drive_service = authenticate()
 
     print("Reading and processing PDF files...")
     questions_text = extract_pdf_text(args.questions_pdf)
 
-    form_title = args.title
+    form_title = args.title or config.get('form_title')
     if not form_title:
         extracted_title = extract_title(questions_text, patterns)
         if extracted_title:
@@ -68,6 +69,12 @@ def main():
         })
 
     batch_update_form(forms_service, form_id, requests)
+
+    drive_folder_name = config.get('drive_folder_name')
+    if drive_folder_name:
+        print(f"Moving form to folder: '{drive_folder_name}'...")
+        folder_id = get_or_create_folder(drive_service, drive_folder_name)
+        move_form_to_folder(drive_service, form_id, folder_id)
 
     print("\nForm created successfully! 🚀")
     print(f"You can view and edit it here: {form_result['responderUri'].replace('viewform', 'edit')}")
