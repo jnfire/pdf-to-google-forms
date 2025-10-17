@@ -2,6 +2,7 @@
 
 ### ✨ Key Features
 - **Dual Mode**: Creates both self-grading quizzes with correct answers and simple surveys.
+- **Automatic Title Extraction**: Automatically extracts the form title from the PDF content, which can be overridden with a command-line argument.
 - **Configurable Extractor**: Uses a `config.json` file to define extraction patterns, allowing you to adapt the script to different PDF formats without changing the code.
 - **Full Automation**: Reads the PDFs, creates the form, configures it, and adds all the questions automatically.
 - **Secure Authentication**: Uses Google's OAuth 2.0 authentication flow for secure access management.
@@ -27,10 +28,11 @@
 ### 🛠️ Configuration
 1.  **API Credentials**: Place your downloaded `credentials.json` file from Google Cloud in the project's root directory. The first time you run the script, you will be prompted to authorize access to your Google Account in your browser. A `token.json` file will be created to store credentials for future runs.
 
-2.  **Configuration File (`config.json`)**: This file defines how the script finds questions and answers in your PDFs using regular expressions. Modify it if your file format is different.
+2.  **Configuration File (`config.json`)**: This file defines how the script finds the title, questions, and answers in your PDFs using regular expressions. Modify it if your file format is different.
     ```json
     {
       "extractor_patterns": {
+        "title": "Cuestionario de Evaluación - (.*)",
         "question": "\\n(?=\\d+\\.\\s)",
         "options": "^[a-d]\\)",
         "answer": "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])"
@@ -42,6 +44,8 @@ Here are some examples of patterns you can use in your `config.json` file, depen
 
 | Use Case                  | Pattern                                     | Description                                                                 |
 | ------------------------- | ------------------------------------------- | --------------------------------------------------------------------------- |
+| **Title**                 |                                             |                                                                             |
+| Title with a prefix       | `"Cuestionario de Evaluación - (.*)"`         | Extracts the title that comes after "Cuestionario de Evaluación - ".         |
 | **Questions**             |                                             |                                                                             |
 | Numbered questions (1., 2.) | `"\\n(?=\\d+\\.\\s)"`                   | Splits the text into questions based on a number followed by a dot and a space. |
 | Questions with a prefix   | `"\\n(?=Question:\\s\\d+)"`              | Splits by "Question:" followed by a number.                                 |
@@ -67,4 +71,11 @@ You only need the questions PDF.
 ```bash
 python main.py "path/to/questions.pdf" --type survey
 ```
+
+**Overriding the title:**
+By default, the script will try to extract the title from the PDF. If you want to specify a custom title, you can use the `--title` argument:
+```bash
+python main.py "path/to/questions.pdf" --title "My Custom Title"
+```
+
 Upon completion, the script will provide you with the links to edit and view the newly created form.
