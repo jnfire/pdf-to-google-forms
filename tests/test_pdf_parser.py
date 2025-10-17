@@ -6,7 +6,6 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from pdf_parser import parse_questions, parse_answers
-from config_loader import load_config
 
 class TestPdfParser(unittest.TestCase):
 
@@ -14,8 +13,8 @@ class TestPdfParser(unittest.TestCase):
         """Set up test data before each test."""
         self.patterns = {
             "question": "\n(?=\d+\.\s)",
-            "options": "^[a-d]\\)",
-            "answer": "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])"
+            "options": "^[a-d]\)",
+            "answer": "(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
         }
         self.sample_questions_text = """
 1. What is the capital of France?

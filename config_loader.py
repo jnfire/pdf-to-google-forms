@@ -8,7 +8,10 @@ def load_config():
     Returns:
         dict: The 'extractor_patterns' mapping from the JSON file.
 
-    Exits with code 1 and prints a helpful message if the file is missing or malformed.
+    Raises:
+        FileNotFoundError: If the config file is not found.
+        json.JSONDecodeError: If the config file is not valid JSON.
+        KeyError: If the config file does not contain the required keys.
     """
     try:
         with open(CONFIG_PATH, 'r') as f:
@@ -16,10 +19,10 @@ def load_config():
             return data['extractor_patterns']
     except FileNotFoundError:
         print(f"Error: Configuration file '{CONFIG_PATH}' not found.")
-        exit(1)
+        raise
     except json.JSONDecodeError as e:
         print(f"Error: The file '{CONFIG_PATH}' is poorly formatted: {e}")
-        exit(1)
+        raise
     except KeyError as e:
         print(f"Error: The file '{CONFIG_PATH}' does not contain required key {e}.")
-        exit(1)
+        raise
