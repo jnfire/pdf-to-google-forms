@@ -59,12 +59,12 @@ Ejecuta el script desde tu terminal, proporcionando los archivos PDF como argume
 **Para crear un Examen (con respuestas):**
 Necesitas un PDF de preguntas y otro de respuestas.
 ```bash
-python main.py "ruta/a/preguntas.pdf" "ruta/a/respuestas.pdf" --type examen
+python main.py "ruta/a/preguntas.pdf" "ruta/a/respuestas.pdf" --type quiz
 ```
 
 **Para crear una Encuesta (sin respuestas):**
 Solo necesitas el PDF de preguntas.
 ```bash
-python main.py "ruta/a/preguntas.pdf" --type encuesta
+python main.py "ruta/a/preguntas.pdf" --type survey
 ```
 Al finalizar, el script te proporcionará los enlaces para editar y responder el formulario recién creado.
