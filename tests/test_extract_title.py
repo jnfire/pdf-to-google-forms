@@ -11,7 +11,8 @@ class TestExtractTitle(unittest.TestCase):
     def setUp(self):
         """Set up test data before each test."""
         self.patterns = {
-            "title": "Cuestionario de Evaluación - (.*)"
+            "title": "Cuestionario de Evaluación - (.*)",
+            "question": "\n(?=\d+\.\s)"
         }
         self.sample_text_with_title = """
 Cuestionario de Evaluación - Tema 1: Informática Básica y Ofimática
@@ -39,6 +40,21 @@ Cuestionario de Evaluación - Tema 1: Informática Básica y Ofimática
         """Test that a default title is returned when no title is found."""
         expected_title = "Cuestionario sin título"
         parsed_title = extract_title(self.sample_text_without_title, self.patterns)
+        self.assertEqual(parsed_title, expected_title)
+
+    def test_extract_title_multiline_success(self):
+        """Test that a multiline title is extracted correctly."""
+        sample_text_with_multiline_title = '''
+Cuestionario de Evaluación - Tema 2: Ofimática
+y Bases de Datos
+1. What is a database?
+   a) A collection of data
+   b) A software to manage data
+   c) Both a and b
+   d) None of the above
+'''
+        expected_title = "Tema 2: Ofimática y Bases de Datos"
+        parsed_title = extract_title(sample_text_with_multiline_title, self.patterns)
         self.assertEqual(parsed_title, expected_title)
 
 if __name__ == '__main__':
