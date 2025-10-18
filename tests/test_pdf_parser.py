@@ -54,6 +54,36 @@ class TestPdfParser(unittest.TestCase):
         parsed_questions = parse_questions("", self.patterns)
         self.assertEqual(parsed_questions, [])
 
+    def test_parse_questions_multiline_success(self):
+        """Test that multiline questions are parsed correctly."""
+        sample_multiline_questions_text = """
+1. This is a question
+that spans multiple lines.
+   a) Option 1
+   b) Option 2
+   c) Option 3
+   d) Option 4
+
+2. This is another question
+that also spans multiple lines.
+   a) Option A
+   b) Option B
+   c) Option C
+   d) Option D
+"""
+        expected_questions = [
+            {
+                'title': '1. This is a question that spans multiple lines.',
+                'options': ['a) Option 1', 'b) Option 2', 'c) Option 3', 'd) Option 4']
+            },
+            {
+                'title': '2. This is another question that also spans multiple lines.',
+                'options': ['a) Option A', 'b) Option B', 'c) Option C', 'd) Option D']
+            }
+        ]
+        parsed_questions = parse_questions(sample_multiline_questions_text, self.patterns)
+        self.assertEqual(parsed_questions, expected_questions)
+
     def test_parse_answers_success(self):
         """Test that answers are parsed correctly."""
         expected_answers = {
