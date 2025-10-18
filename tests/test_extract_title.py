@@ -57,5 +57,23 @@ y Bases de Datos
         parsed_title = extract_title(sample_text_with_multiline_title, self.patterns)
         self.assertEqual(parsed_title, expected_title)
 
+    def test_extract_title_with_end_marker(self):
+        """Test that a title is extracted correctly using an end marker."""
+        patterns_with_marker = self.patterns.copy()
+        patterns_with_marker['title_end_marker'] = 'Instrucciones'
+        sample_text_with_marker = '''
+Cuestionario de Evaluación - Tema 3: Redes
+y Seguridad
+Instrucciones: Lea atentamente las siguientes preguntas.
+1. What is a firewall?
+   a) A hardware device
+   b) A software device
+   c) Both a and b
+   d) None of the above
+'''
+        expected_title = "Tema 3: Redes y Seguridad"
+        parsed_title = extract_title(sample_text_with_marker, patterns_with_marker)
+        self.assertEqual(parsed_title, expected_title)
+
 if __name__ == '__main__':
     unittest.main()

@@ -16,6 +16,14 @@ def extract_title(text, patterns):
     blocks = re.split(patterns['question'], '\n' + text.strip())
     title_text = blocks[0]
 
+    # If a title end marker is defined, use it to split the title
+    title_end_marker = patterns.get('title_end_marker')
+    if title_end_marker:
+        # Split the text at the title end marker, case-insensitively
+        parts = re.split(title_end_marker, title_text, maxsplit=1, flags=re.IGNORECASE)
+        if len(parts) > 1:
+            title_text = parts[0]
+
     # Replace newlines with spaces to handle multi-line titles
     title_text = title_text.replace('\n', ' ')
 
