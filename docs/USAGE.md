@@ -48,7 +48,8 @@ Here are some examples of patterns you can use in your `config.json` file, depen
 | Title with a prefix       | `"Cuestionario de Evaluación - (.*)"`         | Extracts the title that comes after "Cuestionario de Evaluación - ".         |
 | **Questions**             |                                             |                                                                             |
 | Numbered questions (1., 2.) | `"\\n(?=\\d+\\.\\s)"`                   | Splits the text into questions based on a number followed by a dot and a space. |
-| Questions with a prefix   | `"\\n(?=Question:\\s\\d+)"`              | Splits by "Question:" followed by a number.                                 |
+| Questions with a prefix   | `"\n(?=Question:\s\d+)"`              | Splits by "Question:" followed by a number.                                 |
+| Multi-line questions (separated by a blank line) | `"(?m)^\d+\.\s(?!\n\n)"` | Splits questions that may span multiple lines, looking for a number followed by a dot, but not if followed by a blank line. |
 | **Options**               |                                             |                                                                             |
 | Lettered options (a), b)) | `"^[a-d]\\)"`                             | Matches lines starting with a letter from a to d followed by a parenthesis. |
 | Lettered options (a., b.) | `"^[a-d]\\."`                             | Matches lines starting with a letter from a to d followed by a dot.         |
