@@ -1,7 +1,7 @@
 import argparse
 from config_loader import load_config
-from pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
-from google_form_creator import authenticate, create_form, batch_update_form
+from core.pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
+from core.google_form_creator import authenticate, create_form, batch_update_form
 
 def main():
     """Main function to run the script."""
