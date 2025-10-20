@@ -24,4 +24,4 @@ This Python script automates the creation of quizzes and surveys in Google Forms
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the GNU General Public License v3.0 (GPLv3). See the `LICENSE` file for details.
