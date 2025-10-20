@@ -1,7 +1,7 @@
 import argparse
 from config_loader import load_config
-from pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
-from google_form_creator import authenticate, create_form, batch_update_form
+from core.pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
+from core.google_form_creator import authenticate, create_form, batch_update_form
 
 def main():
     """Main function to run the script."""
@@ -70,7 +70,6 @@ def main():
     batch_update_form(forms_service, form_id, requests)
 
     print("\nForm created successfully! 🚀")
-    print(f"You can view and edit it here: {form_result['responderUri'].replace('viewform', 'edit')}")
     print(f"You can respond to it here: {form_result['responderUri']}")
 
 if __name__ == "__main__":

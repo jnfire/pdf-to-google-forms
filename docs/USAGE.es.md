@@ -48,7 +48,8 @@ Aquí tienes algunos ejemplos de patrones que puedes usar en tu archivo `config.
 | Título con un prefijo     | `"Cuestionario de Evaluación - (.*)"`         | Extrae el título que viene después de "Cuestionario de Evaluación - ".         |
 | **Preguntas**             |                                             |                                                                               |
 | Preguntas numeradas (1., 2.) | `"\\n(?=\\d+\\.\\s)"`                   | Divide el texto en preguntas basándose en un número seguido de un punto y un espacio. |
-| Preguntas con un prefijo  | `"\\n(?=Pregunta:\\s\\d+)"`             | Divide por "Pregunta:" seguido de un número.                                  |
+| Preguntas con un prefijo  | `"\n(?=Pregunta:\s\d+)"`             | Divide por "Pregunta:" seguido de un número.                                  |
+| Preguntas multilínea (separadas por línea en blanco) | `"(?m)^\d+\.\s(?!\n\n)"` | Divide las preguntas que pueden ocupar varias líneas, buscando un número seguido de un punto, pero no si le sigue una línea en blanco. |
 | **Opciones**              |                                             |                                                                               |
 | Opciones con letra (a), b)) | `"^[a-d]\\)"`                             | Coincide con líneas que comienzan con una letra de la a a la d seguida de un paréntesis. |
 | Opciones con letra (a., b.) | `"^[a-d]\\."`                             | Coincide con líneas que comienzan con una letra de la a a la d seguida de un punto.   |
