@@ -17,12 +17,15 @@ def load_config():
         with open(CONFIG_PATH, 'r') as f:
             data = json.load(f)
             return data['extractor_patterns']
+
     except FileNotFoundError:
         print(f"Error: Configuration file '{CONFIG_PATH}' not found.")
         raise
+
     except json.JSONDecodeError as e:
         print(f"Error: The file '{CONFIG_PATH}' is poorly formatted: {e}")
         raise
+
     except KeyError as e:
         print(f"Error: The file '{CONFIG_PATH}' does not contain required key {e}.")
         raise

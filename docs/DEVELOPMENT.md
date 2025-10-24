@@ -8,6 +8,7 @@ The project is structured as follows:
 
 ```
 .
+.
 ├── docs/
 │   ├── DEVELOPMENT.md
 │   ├── DEVELOPMENT.es.md
@@ -15,13 +16,14 @@ The project is structured as follows:
 │   └── USAGE.es.md
 ├── tests/
 │   └── test_pdf_parser.py
+├── core/
+│   └── google_form_creator.py
+│   └── pdf_parser.py
 ├── .gitignore
 ├── config.json
 ├── config_loader.py
-├── google_form_creator.py
 ├── LICENSE
 ├── main.py
-├── pdf_parser.py
 ├── README.md
 └── requirements.txt
 ```

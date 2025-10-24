@@ -1,16 +1,19 @@
+from typing import Optional
+
 import fitz  # PyMuPDF
 import re
 
-def extract_pdf_text(pdf_path):
+def extract_pdf_text(pdf_path: str) -> Optional[str]:
     """Extracts text from a PDF file."""
     try:
         with fitz.open(pdf_path) as doc:
             return "".join(page.get_text("text") for page in doc)
+
     except Exception as e:
         print(f"Error reading PDF file {pdf_path}: {e}")
         return None
 
-def extract_title(text, patterns):
+def extract_title(text: str, patterns: dict) -> str:
     """Extracts the title from the text using the patterns from the config."""
     # The title is everything before the first question.
     blocks = re.split(patterns['question'], '\n' + text.strip())
@@ -30,10 +33,11 @@ def extract_title(text, patterns):
     match = re.search(patterns['title'], title_text)
     if match:
         return match.group(1).strip()
+
     return "Cuestionario sin título"
 
 
-def parse_questions(text, patterns):
+def parse_questions(text: str, patterns: dict) -> list:
     """Parses the questions text using the patterns from the config."""
     questions = []
     # Add a newline at the beginning to handle the case where the text starts with a question
@@ -69,10 +73,12 @@ def parse_questions(text, patterns):
 
     return questions
 
-def parse_answers(text, patterns):
+def parse_answers(text: str, patterns: dict) -> dict:
     """Parses the answers text using the patterns from the config."""
     answers = {}
     matches = re.findall(patterns['answer'], text)
+
     for match in matches:
         answers[int(match[0])] = match[1].upper()
+
     return answers

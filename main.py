@@ -1,4 +1,6 @@
 import argparse
+from typing import Optional
+
 from config_loader import load_config
 from core.pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
 from core.google_form_creator import authenticate, create_form, batch_update_form
@@ -21,22 +23,14 @@ def main():
     print("Reading and processing PDF files...")
     questions_text = extract_pdf_text(args.questions_pdf)
 
-    form_title = args.title
-    if not form_title:
-        extracted_title = extract_title(questions_text, patterns)
-        if extracted_title:
-            form_title = extracted_title
+    form_title = get_title(title=args.title, patterns=patterns, questions_text=questions_text)
 
     parsed_questions = parse_questions(questions_text, patterns=patterns)
 
-    correct_answers = {}
-    if args.type == 'quiz':
-        answers_text = extract_pdf_text(args.answers_pdf)
-        correct_answers = parse_answers(answers_text, patterns)
+    correct_answers = get_answers(args, patterns)
 
     print(f"Creating a form of type: '{args.type}'...")
-    form_result = create_form(forms_service, title=form_title)
-    form_id = form_result['formId']
+    form_id, form_result = create_new_form(form_title, forms_service)
 
     requests = []
     if args.type == 'quiz':
@@ -71,6 +65,28 @@ def main():
 
     print("\nForm created successfully! 🚀")
     print(f"You can respond to it here: {form_result['responderUri']}")
+
+
+def create_new_form(form_title: str, forms_service: object) -> tuple:
+    form_result = create_form(forms_service, title=form_title)
+    form_id = form_result['formId']
+    return form_id, form_result
+
+
+def get_answers(args: argparse, patterns: dict) -> dict:
+    correct_answers = {}
+    if args.type == 'quiz':
+        answers_text = extract_pdf_text(args.answers_pdf)
+        correct_answers = parse_answers(answers_text, patterns)
+    return correct_answers
+
+
+def get_title(title: Optional[str], patterns: dict, questions_text: str) -> str:
+    if not title:
+        title = extract_title(text=questions_text, patterns=patterns)
+
+    return title
+
 
 if __name__ == "__main__":
     main()

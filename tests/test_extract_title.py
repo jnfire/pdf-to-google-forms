@@ -4,7 +4,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from pdf_parser import extract_title
+from core.pdf_parser import extract_title
 
 class TestExtractTitle(unittest.TestCase):
 
