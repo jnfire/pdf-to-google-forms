@@ -27,9 +27,9 @@ class TestConfigLoader(unittest.TestCase):
         """Test that the config is loaded correctly."""
         config_data = {
             "extractor_patterns": {
-                "question": "\n(?=\d+\.\s)",
-                "options": "^[a-d]\)",
-                "answer": "(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
+                "question": r"\n(?=\d+\.\s)",
+                "options": r"^[a-d]\)",
+                "answer": r"(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
             }
         }
         self.create_config_file(config_data)
@@ -56,7 +56,7 @@ class TestConfigLoader(unittest.TestCase):
         """Test loading config with a question prefix pattern."""
         config_data = {
             "extractor_patterns": {
-                "question": "\n(?=Question:\s\d+)"
+                "question": r"\n(?=Question:\s\d+)"
             }
         }
         self.create_config_file(config_data)
@@ -67,7 +67,7 @@ class TestConfigLoader(unittest.TestCase):
         """Test loading config with lettered options ending in a dot."""
         config_data = {
             "extractor_patterns": {
-                "options": "^[a-d]\."
+                "options": r"^[a-d]\."
             }
         }
         self.create_config_file(config_data)
@@ -78,7 +78,7 @@ class TestConfigLoader(unittest.TestCase):
         """Test loading config with an answer prefix pattern."""
         config_data = {
             "extractor_patterns": {
-                "answer": "Answer\s+(\d+):\s+([A-Da-d])"
+                "answer": r"Answer\s+(\d+):\s+([A-Da-d])"
             }
         }
         self.create_config_file(config_data)

@@ -12,9 +12,9 @@ class TestPdfParser(unittest.TestCase):
     def setUp(self):
         """Set up test data before each test."""
         self.patterns = {
-            "question": "\n(?=\d+\.\s)",
-            "options": "^[a-d]\)",
-            "answer": "(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
+            "question": r"\n(?=\d+\.\s)",
+            "options": r"^[a-d]\)",
+            "answer": r"(\d+)\.\s+Correct Answer:\s+([A-Da-d])"
         }
         self.sample_questions_text = """
 1. What is the capital of France?

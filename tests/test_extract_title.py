@@ -11,8 +11,8 @@ class TestExtractTitle(unittest.TestCase):
     def setUp(self):
         """Set up test data before each test."""
         self.patterns = {
-            "title": "Cuestionario de Evaluación - (.*)",
-            "question": "\n(?=\d+\.\s)"
+            "title": r"Cuestionario de Evaluación - (.*)",
+            "question": r"\n(?=\d+\.\s)"
         }
         self.sample_text_with_title = """
 Cuestionario de Evaluación - Tema 1: Informática Básica y Ofimática
