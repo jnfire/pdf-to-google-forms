@@ -1,7 +1,7 @@
 import argparse
 from config_loader import load_config
 from core.pdf_parser import extract_pdf_text, parse_questions, parse_answers, extract_title
-from core.google_form_creator import authenticate, create_form, batch_update_form
+from core.google_form_creator import authenticate, create_form, batch_update_form, generate_batch_requests
 
 def main():
     """Main function to run the script."""
@@ -10,6 +10,7 @@ def main():
     parser.add_argument("answers_pdf", nargs='?', default=None, help="(Optional) Path to the PDF with the answers for quiz mode.")
     parser.add_argument("--type", choices=['quiz', 'survey'], default='quiz', help="Defines if the form is a 'quiz' (with answers) or a 'survey' (without answers).")
     parser.add_argument("--title", default=None, help="Title of the Google Form.")
+    parser.add_argument("--required", action="store_true", help="If set, questions will be mandatory.")
     args = parser.parse_args()
 
     if args.type == 'quiz' and not args.answers_pdf:
@@ -38,35 +39,7 @@ def main():
     form_result = create_form(forms_service, title=form_title)
     form_id = form_result['formId']
 
-    requests = []
-    if args.type == 'quiz':
-        requests.append({"updateSettings": {"settings": {"quizSettings": {"isQuiz": True}}, "updateMask": "quizSettings.isQuiz"}})
-
-    for i, q in enumerate(parsed_questions):
-        options = [{'value': opt.split(')', 1)[1].strip()} for opt in q['options']]
-
-        question_body = {
-            "required": True,
-            "choiceQuestion": {"type": "RADIO", "options": options}
-        }
-
-        if args.type == 'quiz':
-            correct_letter = correct_answers.get(i + 1)
-            if correct_letter:
-                correct_index = ord(correct_letter) - ord('A')
-                if 0 <= correct_index < len(options):
-                    question_body["grading"] = {
-                        "pointValue": 1,
-                        "correctAnswers": {"answers": [{"value": options[correct_index]['value']}]}
-                    }
-
-        requests.append({
-            "createItem": {
-                "item": {"title": q['title'], "questionItem": {"question": question_body}},
-                "location": {"index": i},
-            }
-        })
-
+    requests = generate_batch_requests(parsed_questions, args.type == 'quiz', correct_answers, args.required)
     batch_update_form(forms_service, form_id, requests)
 
     print("\nForm created successfully! 🚀")

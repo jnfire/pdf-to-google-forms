@@ -79,4 +79,10 @@ By default, the script will try to extract the title from the PDF. If you want t
 python main.py "path/to/questions.pdf" --title "My Custom Title"
 ```
 
+**Making questions required:**
+By default, questions are not mandatory. To make all questions required, use the `--required` flag:
+```bash
+python main.py "path/to/questions.pdf" --required
+```
+
 Upon completion, the script will provide you with the links to edit and view the newly created form.

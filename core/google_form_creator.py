@@ -34,3 +34,35 @@ def batch_update_form(service, form_id, requests):
     if requests:
         body = {"requests": requests}
         service.forms().batchUpdate(formId=form_id, body=body).execute()
+
+def generate_batch_requests(parsed_questions, is_quiz, correct_answers, is_required=False):
+    """Generates the list of requests for batchUpdate."""
+    requests = []
+    if is_quiz:
+        requests.append({"updateSettings": {"settings": {"quizSettings": {"isQuiz": True}}, "updateMask": "quizSettings.isQuiz"}})
+
+    for i, q in enumerate(parsed_questions):
+        options = [{'value': opt.split(')', 1)[1].strip()} for opt in q['options']]
+
+        question_body = {
+            "required": is_required,
+            "choiceQuestion": {"type": "RADIO", "options": options}
+        }
+
+        if is_quiz:
+            correct_letter = correct_answers.get(i + 1)
+            if correct_letter:
+                correct_index = ord(correct_letter) - ord('A')
+                if 0 <= correct_index < len(options):
+                    question_body["grading"] = {
+                        "pointValue": 1,
+                        "correctAnswers": {"answers": [{"value": options[correct_index]['value']}]}
+                    }
+
+        requests.append({
+            "createItem": {
+                "item": {"title": q['title'], "questionItem": {"question": question_body}},
+                "location": {"index": i},
+            }
+        })
+    return requests

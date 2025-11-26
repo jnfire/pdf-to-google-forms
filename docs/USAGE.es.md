@@ -79,4 +79,10 @@ Por defecto, el script intentará extraer el título desde el PDF. Si quieres es
 python main.py "ruta/a/preguntas.pdf" --title "Mi Título Personalizado"
 ```
 
+**Hacer obligatorias las preguntas:**
+Por defecto, las preguntas no son obligatorias. Para hacer que todas las preguntas sean obligatorias, utiliza la opción `--required`:
+```bash
+python main.py "ruta/a/preguntas.pdf" --required
+```
+
 Al finalizar, el script te proporcionará los enlaces para editar y responder el formulario recién creado.
