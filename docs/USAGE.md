@@ -26,9 +26,12 @@
     ```
 
 ### 🛠️ Configuration
-1.  **API Credentials**: Place your downloaded `credentials.json` file from Google Cloud in the project's root directory. The first time you run the script, you will be prompted to authorize access to your Google Account in your browser. A `token.json` file will be created to store credentials for future runs.
+1.  **API Credentials**: Place your downloaded `credentials.json` file from Google Cloud in the project's root directory. The first time you run the script, you will be prompted to authorize access to your Google Account in your browser. A `token.json` file will be created to store credentials for future runs. If the token expires and cannot be refreshed, the script will automatically prompt you for re-authentication.
 
 2.  **Configuration File (`config.json`)**: This file defines how the script finds the title, questions, and answers in your PDFs using regular expressions. Modify it if your file format is different.
+
+    > **⚠️ Important:** Ensure you escape backslashes in your regular expressions. In JSON format, you must write `\\d` instead of `\d` and `\\s` instead of `\s`.
+
     ```json
     {
       "extractor_patterns": {

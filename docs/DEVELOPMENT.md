@@ -37,6 +37,8 @@ The project is structured as follows:
 
 The project uses Python's built-in `unittest` framework for testing. The tests are located in the `tests` directory.
 
+The tests are designed to run in isolation and use a temporary configuration file (`test_config.json`) to avoid overwriting or deleting your local `config.json` file.
+
 To run the tests, execute the following command from the root of the project:
 
 ```bash

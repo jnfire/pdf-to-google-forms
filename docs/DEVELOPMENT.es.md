@@ -37,6 +37,8 @@ El proyecto está estructurado de la siguiente manera:
 
 El proyecto utiliza el framework de pruebas integrado de Python `unittest`. Las pruebas se encuentran en el directorio `tests`.
 
+Las pruebas están diseñadas para ejecutarse de forma aislada y utilizan un archivo de configuración temporal (`test_config.json`) para no sobrescribir ni eliminar tu archivo `config.json` local.
+
 Para ejecutar las pruebas, ejecuta el siguiente comando desde la raíz del proyecto:
 
 ```bash
