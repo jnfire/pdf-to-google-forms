@@ -5,7 +5,7 @@ import os
 # Add the parent directory to the sys.path to allow imports from the main project folder
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from pdf_parser import parse_questions, parse_answers
+from core.pdf_parser import parse_questions, parse_answers
 
 class TestPdfParser(unittest.TestCase):
 

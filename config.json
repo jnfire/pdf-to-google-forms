@@ -1,7 +1,6 @@
 {
   "extractor_patterns": {
-    "title": "Cuestionario de Evaluación - (.*)",
-    "title_end_marker": "Instrucciones",
+    "title": "Cuestionario de Evaluaci\u00f3n - (.*)",
     "question": "\\n(?=\\d+\\.\\s)",
     "options": "^[a-d]\\)",
     "answer": "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])"

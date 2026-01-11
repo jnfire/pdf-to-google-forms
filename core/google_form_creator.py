@@ -3,6 +3,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from google.auth.exceptions import RefreshError
 
 SCOPES = ["https://www.googleapis.com/auth/forms.body"]
 TOKEN_PATH = 'token.json'
@@ -15,8 +16,13 @@ def authenticate():
         creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
+            try:
+                creds.refresh(Request())
+            except RefreshError:
+                print("Token expired and cannot be refreshed. Re-authenticating...")
+                creds = None
+
+        if not creds:
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
             creds = flow.run_local_server(port=0)
         with open(TOKEN_PATH, 'w') as token:
@@ -34,3 +40,35 @@ def batch_update_form(service, form_id, requests):
     if requests:
         body = {"requests": requests}
         service.forms().batchUpdate(formId=form_id, body=body).execute()
+
+def generate_batch_requests(parsed_questions, is_quiz, correct_answers, is_required=False):
+    """Generates the list of requests for batchUpdate."""
+    requests = []
+    if is_quiz:
+        requests.append({"updateSettings": {"settings": {"quizSettings": {"isQuiz": True}}, "updateMask": "quizSettings.isQuiz"}})
+
+    for i, q in enumerate(parsed_questions):
+        options = [{'value': opt.split(')', 1)[1].strip()} for opt in q['options']]
+
+        question_body = {
+            "required": is_required,
+            "choiceQuestion": {"type": "RADIO", "options": options}
+        }
+
+        if is_quiz:
+            correct_letter = correct_answers.get(i + 1)
+            if correct_letter:
+                correct_index = ord(correct_letter) - ord('A')
+                if 0 <= correct_index < len(options):
+                    question_body["grading"] = {
+                        "pointValue": 1,
+                        "correctAnswers": {"answers": [{"value": options[correct_index]['value']}]}
+                    }
+
+        requests.append({
+            "createItem": {
+                "item": {"title": q['title'], "questionItem": {"question": question_body}},
+                "location": {"index": i},
+            }
+        })
+    return requests
