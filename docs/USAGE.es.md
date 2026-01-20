@@ -6,6 +6,7 @@
 - **Extractor Configurable**: Utiliza un archivo `config.json` para definir patrones de extracción, permitiendo adaptar el script a diferentes formatos de PDF sin modificar el código.
 - **Automatización Completa**: Lee los PDF, crea el formulario, lo configura y añade todas las preguntas de forma automática.
 - **Autenticación Segura**: Usa el flujo de autenticación OAuth 2.0 de Google para gestionar el acceso de forma segura.
+- **Modo Debug**: Nueva opción `--debug` para imprimir las preguntas parseadas, las respuestas detectadas y las peticiones exactas que se enviarían a la API de Google Forms, sin autenticar ni realizar llamadas a la API. Útil para validar los patrones de extracción antes de crear el formulario real.
 
 ### 📋 Requisitos
 - Python 3.7 o superior.
@@ -26,7 +27,7 @@
     ```
 
 ### 🛠️ Configuración
-1.  **Credenciales de la API**: Coloca tu archivo `credentials.json` descargado de Google Cloud en la raíz del proyecto. La primera vez que ejecutes el script, se te pedirá que autorices el acceso a tu cuenta de Google en el navegador. Se creará un archivo `token.json` para futuras ejecuciones. Si el token caduca y no puede renovarse, el script te pedirá que te autentiques nuevamente de forma automática.
+1.  **Credenciales de la API**: Coloca tu archivo `credentials.json` descargado de Google Cloud en la raíz del proyecto. La primera vez que ejecutes el script, se te pedirá que autorices el acceso a tu cuenta de Google en el navegador. Se creará un archivo `token.json` para futuras ejecuciones. Si el token caduca y no puede renovarse, el script te pedirá que te autentiques nuevamente de forma automática (ver re-autenticación rápida más abajo).
 
 2.  **Archivo de Configuración (`config.json`)**: Este archivo define cómo el script encuentra el título, las preguntas y las respuestas en tus PDF usando expresiones regulares. Modifícalo si el formato de tus archivos es diferente.
     
@@ -38,10 +39,19 @@
         "title": "Cuestionario de Evaluación - (.*)",
         "question": "\\n(?=\\d+\\.\\s)",
         "options": "^[a-d]\\)",
-        "answer": "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])"
+        "answer": "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])",
+        "answer_patterns": [
+          "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])",
+          "(\\d+)\\.\\s*Respuesta:\\s*([A-Da-d])",
+          "Respuesta\\s+(\\d+):\\s*([A-Da-d])",
+          "(\\d+)\\.\\s*([A-Da-d])\\b"
+        ]
       }
     }
     ```
+
+    - `answer_patterns` es una lista de expresiones regulares que se probarán en orden para detectar las respuestas en el PDF de respuestas. El parser usará el primer patrón que devuelva coincidencias. Esto hace que el proceso de extracción sea configurable sin tocar el código.
+    - Compatibilidad hacia atrás: la clave única `answer` aún se soporta y se empleará si está presente y `answer_patterns` no devuelve coincidencias.
 
 Aquí tienes algunos ejemplos de patrones que puedes usar en tu archivo `config.json`, dependiendo del formato de tu PDF:
 
@@ -76,6 +86,13 @@ Solo necesitas el PDF de preguntas.
 python main.py "ruta/a/preguntas.pdf" --type survey
 ```
 
+**Modo debug (validar extracción antes de llamadas a la API):**
+Si quieres verificar que el parser detecta correctamente preguntas y respuestas (y ver las peticiones exactas que se enviarían a Google Forms), ejecuta con `--debug`. Esto imprimirá las preguntas parseadas, las respuestas detectadas y el payload `requests` y saldrá sin autenticar ni llamar a Google.
+
+```bash
+python main.py "cuestionarios/examen-2.pdf" "cuestionarios/examen-2-respuestas.pdf" --type quiz --debug
+```
+
 **Sobrescribir el título:**
 Por defecto, el script intentará extraer el título desde el PDF. Si quieres especificar un título personalizado, puedes usar el argumento `--title`:
 ```bash
@@ -86,6 +103,14 @@ python main.py "ruta/a/preguntas.pdf" --title "Mi Título Personalizado"
 Por defecto, las preguntas no son obligatorias. Para hacer que todas las preguntas sean obligatorias, utiliza la opción `--required`:
 ```bash
 python main.py "ruta/a/preguntas.pdf" --required
+```
+
+**Re-autenticación rápida (OAuth):**
+Si encuentras errores de OAuth como `invalid_grant` o `Bad Request`, intenta eliminar `token.json` y ejecutar de nuevo para forzar la re-autenticación:
+
+```bash
+rm token.json
+python main.py "ruta/a/preguntas.pdf" "ruta/a/respuestas.pdf" --type quiz
 ```
 
 Al finalizar, el script te proporcionará los enlaces para editar y responder el formulario recién creado.

@@ -6,6 +6,7 @@
 - **Configurable Extractor**: Uses a `config.json` file to define extraction patterns, allowing you to adapt the script to different PDF formats without changing the code.
 - **Full Automation**: Reads the PDFs, creates the form, configures it, and adds all the questions automatically.
 - **Secure Authentication**: Uses Google's OAuth 2.0 authentication flow for secure access management.
+- **Debug Mode**: New `--debug` option to print the parsed questions, detected correct answers and the exact requests that would be sent to the Google Forms API, without authenticating or making any API calls. Useful to validate extraction patterns before creating a real form.
 
 ### 📋 Requirements
 - Python 3.7 or higher.
@@ -26,7 +27,7 @@
     ```
 
 ### 🛠️ Configuration
-1.  **API Credentials**: Place your downloaded `credentials.json` file from Google Cloud in the project's root directory. The first time you run the script, you will be prompted to authorize access to your Google Account in your browser. A `token.json` file will be created to store credentials for future runs. If the token expires and cannot be refreshed, the script will automatically prompt you for re-authentication.
+1.  **API Credentials**: Place your downloaded `credentials.json` file from Google Cloud in the project's root directory. The first time you run the script, you will be prompted to authorize access to your Google Account in your browser. A `token.json` file will be created to store credentials for future runs. If the token expires and cannot be refreshed, the script will automatically prompt you for re-authentication (see quick re-auth below).
 
 2.  **Configuration File (`config.json`)**: This file defines how the script finds the title, questions, and answers in your PDFs using regular expressions. Modify it if your file format is different.
 
@@ -38,10 +39,19 @@
         "title": "Cuestionario de Evaluación - (.*)",
         "question": "\\n(?=\\d+\\.\\s)",
         "options": "^[a-d]\\)",
-        "answer": "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])"
+        "answer": "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])",
+        "answer_patterns": [
+          "(\\d+)\\.\\s+Correct Answer:\\s+([A-Da-d])",
+          "(\\d+)\\.\\s*Respuesta:\\s*([A-Da-d])",
+          "Respuesta\\s+(\\d+):\\s*([A-Da-d])",
+          "(\\d+)\\.\\s*([A-Da-d])\\b"
+        ]
       }
     }
     ```
+
+    - `answer_patterns` is a list of regular expressions that will be tried in order to detect answers in the answers PDF. The parser will use the first pattern that yields matches. This makes the extraction process configurable without editing code.
+    - Backwards compatibility: the single `answer` key is still supported and will be used if present and no `answer_patterns` matches.
 
 Here are some examples of patterns you can use in your `config.json` file, depending on the format of your PDF:
 
@@ -76,6 +86,13 @@ You only need the questions PDF.
 python main.py "path/to/questions.pdf" --type survey
 ```
 
+**Debug mode (validate extraction before API calls):**
+If you want to verify that the parser is detecting questions and answers correctly (and see the exact requests that would be sent to Google Forms) run with `--debug`. This will print the parsed questions, the detected correct answers and the `requests` payload and exit without authenticating or calling Google.
+
+```bash
+python main.py "cuestionarios/examen-2.pdf" "cuestionarios/examen-2-respuestas.pdf" --type quiz --debug
+```
+
 **Overriding the title:**
 By default, the script will try to extract the title from the PDF. If you want to specify a custom title, you can use the `--title` argument:
 ```bash
@@ -86,6 +103,14 @@ python main.py "path/to/questions.pdf" --title "My Custom Title"
 By default, questions are not mandatory. To make all questions required, use the `--required` flag:
 ```bash
 python main.py "path/to/questions.pdf" --required
+```
+
+**Quick re-auth (OAuth) troubleshooting:**
+If you encounter OAuth errors such as `invalid_grant` or `Bad Request`, try removing `token.json` and run again to force re-authentication:
+
+```bash
+rm token.json
+python main.py "path/to/questions.pdf" "path/to/answers.pdf" --type quiz
 ```
 
 Upon completion, the script will provide you with the links to edit and view the newly created form.

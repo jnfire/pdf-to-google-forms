@@ -3,6 +3,12 @@
     "title": "Cuestionario de Evaluaci\u00f3n - (.*)",
     "question": "\\n(?=\\d+\\.\\s)",
     "options": "^[a-d]\\)",
-    "answer": "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])"
+    "answer": "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])",
+    "answer_patterns": [
+      "(\\d+)\\.\\s+Respuesta Correcta:\\s+([A-Da-d])",
+      "(\\d+)\\.\\s*Respuesta:\\s*([A-Da-d])",
+      "Respuesta\\s+(\\d+):\\s*([A-Da-d])",
+      "(\\d+)\\.\\s*([A-Da-d])\\b"
+    ]
   }
 }

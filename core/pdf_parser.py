@@ -70,9 +70,44 @@ def parse_questions(text, patterns):
     return questions
 
 def parse_answers(text, patterns):
-    """Parses the answers text using the patterns from the config."""
+    """Parses the answers text using the patterns from the config.
+
+    Now supports a configurable list `answer_patterns` in the config file. If
+    `answer_patterns` exists it is tried in order; otherwise, the function will
+    attempt the single `answer` pattern (for backward compatibility), and then
+    a set of internal fallback patterns.
+    """
     answers = {}
-    matches = re.findall(patterns['answer'], text)
-    for match in matches:
-        answers[int(match[0])] = match[1].upper()
+    if not text:
+        return answers
+
+    # Build the list of patterns to try in priority order
+    patterns_to_try = []
+    cfg_patterns = patterns.get('answer_patterns')
+    if isinstance(cfg_patterns, list) and cfg_patterns:
+        patterns_to_try.extend(cfg_patterns)
+    # Backwards compatibility: single `answer` key
+    primary = patterns.get('answer')
+    if primary and primary not in patterns_to_try:
+        patterns_to_try.append(primary)
+
+    # Add internal fallback patterns if nothing matched from config
+    internal_fallbacks = [
+        r"(\d+)\.\s*Respuesta:\s*([A-Da-d])",
+        r"Respuesta\s+(\d+):\s*([A-Da-d])",
+        r"(\d+)\.\s*([A-Da-d])\b",
+    ]
+
+    # Try each pattern in order
+    for p in patterns_to_try + internal_fallbacks:
+        found = re.findall(p, text)
+        if found:
+            for match in found:
+                try:
+                    answers[int(match[0])] = match[1].upper()
+                except Exception:
+                    continue
+            if answers:
+                return answers
+
     return answers
